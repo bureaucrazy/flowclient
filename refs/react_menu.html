@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Flow Works Client</title>
+    <script src="react.js"></script>
+    <script src="JSXTransformer.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <style>
+      body, html {
+          font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      .navigation {
+          list-style: none;
+      }
+
+      .navigation__item {
+          float: left;
+          position: relative;
+          color: #262626;
+      }
+
+      .navigation__item a {
+          text-decoration: none;
+          color: inherit;
+          padding: 5px 8px 10px;
+      }
+
+      .navigation__dropdown {
+          display: none;
+          background: #F7F7F7;
+          border: 1px solid rgba( 0, 0, 0, 0.1 );
+          position: absolute;
+          width: 150px;
+          top: 25px;
+          margin: 0;
+          padding: 0;
+          border-radius: 3px;
+      }
+
+      .navigation__dropdown--open {
+          display: block;
+      }
+
+      .navigation__dropdown__item {
+          list-style: none;
+          padding: 5px 7px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <script type="text/jsx">
+        var navigationConfig = [
+            {
+                href: 'http://ryanclark.me',
+                text: 'My Website',
+                children: [
+                    {
+                        href: 'http://ryanclark.me/how-angularjs-implements-dirty-checking/',
+                        text: 'Angular'
+                    },
+                    {
+                        href: 'http://ryanclark.me/getting-started-with-react/',
+                        text: 'React'
+                    }
+                ]
+            },
+            {
+                text: 'Social Networks',
+                children: [
+                    {
+                        href: 'http://twitter.com/rynclark',
+                        text: 'My Twitter'
+                    },
+                    {
+                        href: 'http://facebook.com',
+                        text: 'Facebook'
+                    },
+                    {
+                        href: 'http://linkedin.com',
+                        text: 'LinkedIn'
+                    }
+                ]
+            },
+            {
+                text: 'Search Engines',
+                children: [
+                    {
+                        href: 'http://google.co.uk',
+                        text: 'Google'
+                    },
+                    {
+                        href: 'http://google.co.uk',
+                        text: 'Bing' // yeah right
+                    },
+                    {
+                        href: 'http://google.co.uk',
+                        text: 'Yahoo' // haha
+                    }
+                ]
+            }
+        ];
+
+        var Navigation = React.createClass({
+            getInitialState: function () {
+                return {
+                    openDropdown: -1
+                };
+            },
+            getDefaultProps: function () {
+                return {
+                    config: []
+                }
+            },
+            openDropdown: function (id) {
+            console.log('open!');
+                this.setState({
+                    openDropdown: id
+                });
+            },
+            closeDropdown: function () {
+                this.setState({
+                    openDropdown: -1
+                });
+            },
+            propTypes: {
+                config: React.PropTypes.array
+            },
+            render: function () {
+                var config = this.props.config;
+
+                var items = config.map(function (item, index) {
+                    var children, dropdown;
+                    if (item.children) {
+                        children = item.children.map(function (child) {
+                            return (
+                                <li className="navigation__dropdown__item">
+                                    <a className="navigation__dropdown__link" href={ child.href }>
+                                        { child.text }
+                                    </a>
+                                </li>
+                            );
+                        });
+
+                        var dropdownClass = 'navigation__dropdown';
+                        if (this.state.openDropdown === index) {
+                            dropdownClass += ' navigation__dropdown--open';
+                        }
+
+                        console.log(this.state.openDropdown, index);
+
+                        dropdown = (
+                            <ul className={ dropdownClass }>
+                                { children }
+                            </ul>
+                        );
+                    }
+                    return (
+                        <li className="navigation__item" onMouseOut={ this.closeDropdown } onMouseOver={ this.openDropdown.bind(this, index) }>
+                            <a className="navigation__link" href={ item.href }>
+                                { item.text }
+                            </a>
+
+                            { dropdown }
+                        </li>
+                        );
+                }, this);
+
+                return (
+                    <div className="navigation">
+                        { items }
+                    </div>
+                    );
+            }
+        });
+
+        React.render(<Navigation config={ navigationConfig } />, document.body);
+      </script>
+    </div>
+  </body>
+</html>

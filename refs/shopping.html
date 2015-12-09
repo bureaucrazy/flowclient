@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>My Shopping Cart</title>
+    <script src="react.js"></script>
+    <script src="JSXTransformer.js"></script>
+  </head>
+  <body>
+    <div id="shopping"></div>
+    <script type="text/jsx">
+      var Cart = React.createClass({
+        getInitialState: function() {
+          return {totalPrice: 0};
+        },
+        updateTotalPrice: function(price) {
+          var newTotalPrice = this.state.totalPrice + price;
+          this.setState({totalPrice: newTotalPrice});
+        },
+        render: function() {
+          var styles = {width: "300px", height: "300px"}
+          var productDetails = this.props.products.map(function(detail){
+            return <Product name             = {detail.name}
+                            price            = {detail.price}
+                            updateTotalPrice = {this.updateTotalPrice}
+                   />
+               }.bind(this));
+          return <div style={styles}>
+                  Total $ {this.state.totalPrice}
+                  {productDetails}
+                 </div>
+        }
+      });
+
+      var Product = React.createClass({
+        getInitialState: function() {
+          return {
+            selectedColor: this.props.selectedColor,
+            selected: this.props.selected}
+        },
+        changeColor: function(){
+          if (this.state.selected === this.props.selected) {
+              this.setState({selected: true});
+              this.setState({selectedColor: "pink"});
+              this.props.updateTotalPrice(this.props.price);
+          } else {
+            this.setState({selected: this.props.selected});
+            this.setState({selectedColor: this.props.selectedColor});
+            this.props.updateTotalPrice(-this.props.price);
+          }
+        },
+        render: function(){
+          var styles = {width: "150px",
+                        height: "50px",
+                        backgroundColor: this.state.selectedColor,
+                        border: "1px solid black"
+                      }
+          return <div style={styles} onClick={this.changeColor}>{this.props.name} $({this.props.price})</div>
+        }
+      });
+
+      React.render(<Cart products={[{name: "Phone", price: 100, selected: false},
+                                    {name: "iPad", price: 200, selected: false},
+                                    {name: "PC", price: 300, selected: false},
+                                    {name: "TV", price: 400, selected: false}]}/>,
+                                             document.getElementById('shopping'))
+    </script>
+  </body>
+</html>

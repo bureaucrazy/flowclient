@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fund.sy Client</title>
+    <script src="react.js"></script>
+    <script src="JSXTransformer.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script type="text/jsx">
+      var CampaignsContainer = React.createClass({
+        getInitialState: function(){
+          return {showSpinner: true, campaigns: []};
+        },
+        componentDidMount: function() {
+          $.ajax({
+            method: "GET",
+            url: "http://localhost:3000/campaigns.json",
+            success: function(data) {
+              this.setState({showSpinner: false, campaigns: data});
+            }.bind(this)
+          });
+        },
+        render: function(){
+          var spinnerStyleDisplay = this.state.showSpinner ? "block" : "none";
+          var spinnerStyle        = {display: spinnerStyleDisplay};
+          var campaigns           = this.state.campaigns.map(function(campaign){
+                                      return <Campaign title={campaign.title}
+                                                       id   ={campaign.id}/>
+                                    })
+          return <div>
+                  <h1>Welcome To Fund.sy</h1>
+                  <div style={spinnerStyle}>
+                    Loading...
+                  </div>
+                  {campaigns}
+                </div>
+        }
+      });
+
+      var Campaign = React.createClass({
+        getInitialState: function() {
+          return {showSpinner: true, campaignDetails: []};
+        },
+        fetchDetails: function() {
+          $.ajax({
+            method: "GET",
+            url: "http://localhost:3000/campaigns/" + this.props.id + ".json",
+            success: function(data) {
+              console.log(data);
+            }
+          });
+        },
+        render: function() {
+          return <div>
+                  <h2>
+                    <a href="javascript:void(0);" onClick={this.fetchDetails}>
+                      {this.props.id}.{this.props.title}
+                    </a>
+                  </h2>
+                  <hr/>
+                </div>
+        }
+      });
+
+      React.render(<CampaignsContainer/>, document.getElementById("container"));
+    </script>
+  </body>
+</html>

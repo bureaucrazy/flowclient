@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>React.js Forms</title>
+    <script src="react.js"></script>
+    <script src="JSXTransformer.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <script type="text/jsx">
+        var TextRepeater = React.createClass({
+          getInitialState: function(){
+            return {text: ""};
+          },
+          updateText: function(){
+            var userText = this.refs.userInput.getDOMNode().value;
+            this.setState({text: userText});
+          },
+          render: function(){
+            return <div>
+                      <label htmlFor="userInput">Type something: </label>
+                      <input type = "text"
+                             id   = "userInput"
+                             ref  = "userInput"
+                           onChange={this.updateText}/>
+                         <div>{this.state.text}</div>
+                   </div>
+          }
+        });
+          React.render(<TextRepeater />, document.getElementById("container"));
+      </script>
+    </div>
+  </body>
+</html>
